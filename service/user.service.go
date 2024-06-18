@@ -3,22 +3,28 @@ package service
 import (
 	"capstone-project/model"
 	"capstone-project/repository"
+	"crypto/md5"
+	"encoding/hex"
 	"strings"
+	"time"
 	"unicode"
+
+	"github.com/golang-jwt/jwt"
 )
 
-type Service struct {
-	repository repository.UserRepository
+type userService struct {
+	userRepo    repository.UserRepository
+	sessionRepo repository.SessionRepository
 }
 
 type UserService interface {
 	Register(user model.User) error
-	Login(user model.User) error
-	GetUserByUsername(user model.User) error
-	GetUserByEmail(user model.User) error
-	GetUserById(user model.User) error
-	UpdateUserById(user model.User) error
-	DeleteUserById(user model.User) error
+	Login(user model.User) (token *string, err error)
+	GetUserByUsername(username string) (*model.User, error)
+	GetUserByEmail(email string) (*model.User, error)
+	GetUserById(id int) (*model.User, error)
+	UpdateUserById(id int, user model.User) error
+	DeleteUserById(id int) error
 	CheckPassLength(pass string) bool
 	CheckEmail(data string) bool
 	CheckUsername(data string) bool
@@ -27,53 +33,85 @@ type UserService interface {
 	HasLowerLetter(password string) bool
 	HasNumber(password string) bool
 	HasSpecialChar(password string) bool
+	GenerateHash(password string) string
 }
 
-func NewUserService(repository repository.UserRepository) *Service {
-	return &Service{repository: repository}
+func NewUserService(userRepo repository.UserRepository, sessionRepo repository.SessionRepository) *userService {
+	return &userService{userRepo: userRepo, sessionRepo: sessionRepo}
 }
 
-func (s *Service) Register(user model.User) error {
-	return s.repository.CreateUser(user)
+func (s *userService) Register(user model.User) error {
+	return s.userRepo.CreateUser(user)
 }
 
-func (s *Service) Login(user model.User) error {
-	return s.repository.GetUserByUsername(user)
+func (s *userService) Login(user model.User) (token *string, err error) {
+	fetchedUser, err := s.userRepo.GetUserByUsername(user.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	expirationTime := time.Now().Add(24 * time.Hour)
+	claims := &model.Claims{
+		Username: fetchedUser.Username,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+
+	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := t.SignedString(model.JwtKey)
+	if err != nil {
+		return nil, err
+	}
+
+	session := model.Session{
+		Token:    tokenString,
+		Username: fetchedUser.Username,
+		Expiry:   expirationTime,
+	}
+
+	if _, err := s.sessionRepo.GetSessionByUsername(fetchedUser.Username); err != nil {
+		s.sessionRepo.CreateSession(session)
+	} else {
+		s.sessionRepo.UpdateSession(session)
+	}
+
+	return &tokenString, nil
 }
 
-func (s *Service) GetUserByUsername(user model.User) error {
-	return s.repository.GetUserByUsername(user)
+func (s *userService) GetUserByUsername(username string) (*model.User, error) {
+	return s.userRepo.GetUserByUsername(username)
 }
 
-func (s *Service) GetUserByEmail(user model.User) error {
-	return s.repository.GetUserByEmail(user)
+func (s *userService) GetUserByEmail(email string) (*model.User, error) {
+	return s.userRepo.GetUserByEmail(email)
 }
 
-func (s *Service) GetUserById(user model.User) error {
-	return s.repository.GetUserById(user)
+func (s *userService) GetUserById(id int) (*model.User, error) {
+	return s.userRepo.GetUserById(id)
 }
 
-func (s *Service) UpdateUserById(user model.User) error {
-	return s.repository.UpdateUserById(user)
+func (s *userService) UpdateUserById(id int, user model.User) error {
+	return s.userRepo.UpdateUserById(id, user)
 }
 
-func (s *Service) DeleteUserById(user model.User) error {
-	return s.repository.DeleteUserById(user)
+func (s *userService) DeleteUserById(id int) error {
+	return s.userRepo.DeleteUserById(id)
 }
 
-func (s *Service) CheckPassLength(pass string) bool {
+func (s *userService) CheckPassLength(pass string) bool {
 	return len(pass) >= 8
 }
 
-func (s *Service) CheckEmail(data string) bool {
+func (s *userService) CheckEmail(data string) bool {
 	return strings.Contains(data, "@") && strings.HasSuffix(data, ".com")
 }
 
-func (s *Service) CheckUsername(data string) bool {
+func (s *userService) CheckUsername(data string) bool {
 	return !strings.Contains(data, " ")
 }
 
-func (s *Service) CheckFullName(data string) bool {
+func (s *userService) CheckFullName(data string) bool {
 	for _, char := range data {
 		if !('a' <= char && char <= 'z' || 'A' <= char && char <= 'Z' || char == ' ') {
 			return false
@@ -82,7 +120,7 @@ func (s *Service) CheckFullName(data string) bool {
 	return true
 }
 
-func (s *Service) HasUpperLetter(password string) bool {
+func (s *userService) HasUpperLetter(password string) bool {
 	for _, c := range password {
 		if unicode.IsUpper(c) {
 			return true
@@ -91,7 +129,7 @@ func (s *Service) HasUpperLetter(password string) bool {
 	return false
 }
 
-func (s *Service) HasLowerLetter(password string) bool {
+func (s *userService) HasLowerLetter(password string) bool {
 	for _, c := range password {
 		if unicode.IsLower(c) {
 			return true
@@ -100,7 +138,7 @@ func (s *Service) HasLowerLetter(password string) bool {
 	return false
 }
 
-func (s *Service) HasNumber(password string) bool {
+func (s *userService) HasNumber(password string) bool {
 	for _, c := range password {
 		if unicode.IsNumber(c) {
 			return true
@@ -109,11 +147,17 @@ func (s *Service) HasNumber(password string) bool {
 	return false
 }
 
-func (s *Service) HasSpecialChar(password string) bool {
+func (s *userService) HasSpecialChar(password string) bool {
 	for _, c := range password {
 		if unicode.IsPunct(c) || unicode.IsSymbol(c) {
 			return true
 		}
 	}
 	return false
+}
+
+func (s *userService) GenerateHash(password string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(password))
+	return hex.EncodeToString(hasher.Sum(nil))
 }

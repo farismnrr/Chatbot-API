@@ -62,6 +62,15 @@ type SuccessResponse struct {
 	Message string `json:"message"`
 }
 
+type Session struct {
+	ID       int       `json:"id"`
+	Token    string    `json:"token"`
+	Username string    `json:"username"`
+	Expiry   time.Time `json:"expiry"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+}
+
 func NewUser(fullName string, username string, password string, email string) *User {
 	return &User{FullName: fullName, Username: username, Password: password, Email: email}
 }
@@ -92,4 +101,8 @@ func NewErrorResponse(code int, message string) *ErrorResponse {
 
 func NewSuccessResponse(code int, message string) *SuccessResponse {
 	return &SuccessResponse{Code: code, Message: message}
+}
+
+func NewSession(token string, username string, expiry time.Time) *Session {
+	return &Session{Token: token, Username: username, Expiry: expiry}
 }

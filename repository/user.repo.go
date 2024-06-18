@@ -5,43 +5,49 @@ import (
 	"capstone-project/model"
 )
 
-type Repository struct {
+type userRepository struct {
 	DB *database.Database
 }
 
 type UserRepository interface {
 	CreateUser(user model.User) error
-	GetUserByUsername(user model.User) error
-	GetUserByEmail(user model.User) error
-	GetUserById(user model.User) error
-	UpdateUserById(user model.User) error
-	DeleteUserById(user model.User) error
+	GetUserByUsername(username string) (*model.User, error)
+	GetUserByEmail(email string) (*model.User, error)
+	GetUserById(id int) (*model.User, error)
+	UpdateUserById(id int, user model.User) error
+	DeleteUserById(id int) error
 }
 
-func NewUserRepository(db *database.Database) *Repository {
-	return &Repository{DB: db}
+func NewUserRepository(db *database.Database) *userRepository {
+	return &userRepository{DB: db}
 }
 
-func (r *Repository) CreateUser(user model.User) error {
+func (r *userRepository) CreateUser(user model.User) error {
 	return r.DB.DB.QueryRow("INSERT INTO Users (full_name, username, password, email) VALUES (?, ?, ?, ?)", user.FullName, user.Username, user.Password, user.Email).Err()
 }
 
-func (r *Repository) GetUserByUsername(user model.User) error {
-	return r.DB.DB.QueryRow("SELECT id, full_name, username, password, email, created_at, updated_at FROM Uers WHERE username = ?", user.Username).Err()
+func (r *userRepository) GetUserByUsername(username string) (*model.User, error) {
+	var user model.User
+	err := r.DB.DB.QueryRow("SELECT id, full_name, username, password, email, created_at, updated_at FROM Users WHERE username = ?", username).Scan(&user.ID, &user.FullName, &user.Username, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+	return &user, err
 }
 
-func (r *Repository) GetUserByEmail(user model.User) error {
-	return r.DB.DB.QueryRow("SELECT id, full_name, username, password, email, created_at, updated_at FROM Uers WHERE email = ?", user.Email).Err()
+func (r *userRepository) GetUserByEmail(email string) (*model.User, error) {
+	var user model.User
+	err := r.DB.DB.QueryRow("SELECT id, full_name, username, password, email, created_at, updated_at FROM Users WHERE email = ?", email).Scan(&user.ID, &user.FullName, &user.Username, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+	return &user, err
 }
 
-func (r *Repository) GetUserById(user model.User) error {
-	return r.DB.DB.QueryRow("SELECT id, full_name, username, password, email, created_at, updated_at FROM Users WHERE id = ?", user.ID).Err()
+func (r *userRepository) GetUserById(id int) (*model.User, error) {
+	var user model.User
+	err := r.DB.DB.QueryRow("SELECT id, full_name, username, password, email, created_at, updated_at FROM Users WHERE id = ?", id).Scan(&user.ID, &user.FullName, &user.Username, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+	return &user, err
 }
 
-func (r *Repository) UpdateUserById(user model.User) error {
-	return r.DB.DB.QueryRow("UPDATE Users SET full_name = ?, email = ?, password = ? WHERE id = ?", user.FullName, user.Email, user.Password, user.ID).Err()
+func (r *userRepository) UpdateUserById(id int, user model.User) error {
+	return r.DB.DB.QueryRow("UPDATE Users SET full_name = ?, email = ?, password = ? WHERE id = ?", user.FullName, user.Email, user.Password, id).Err()
 }
 
-func (r *Repository) DeleteUserById(user model.User) error {
-	return r.DB.DB.QueryRow("DELETE FROM Users WHERE id = ?", user.ID).Err()
+func (r *userRepository) DeleteUserById(id int) error {
+	return r.DB.DB.QueryRow("DELETE FROM Users WHERE id = ?", id).Err()
 }

@@ -20,7 +20,7 @@ func (d *Database) CreateUserTable() error {
 
 func (d *Database) CreateConversationTable() error {
 	query := `
-        CREATE TABLE Conversations (
+		CREATE TABLE IF NOT EXISTS Conversations (
             id INT PRIMARY KEY AUTO_INCREMENT,
             user_id INT NOT NULL,
             status VARCHAR(255) NOT NULL,
@@ -35,7 +35,7 @@ func (d *Database) CreateConversationTable() error {
 
 func (d *Database) CreateMessageTable() error {
 	query := `
-        CREATE TABLE Messages (
+		CREATE TABLE IF NOT EXISTS Messages (
             id INT PRIMARY KEY AUTO_INCREMENT,
             conversation_id INT NOT NULL,
             user_id INT NOT NULL,
@@ -51,7 +51,7 @@ func (d *Database) CreateMessageTable() error {
 
 func (d *Database) CreateIntentTable() error {
 	query := `
-        CREATE TABLE Intents (
+		CREATE TABLE IF NOT EXISTS Intents (
             id INT PRIMARY KEY AUTO_INCREMENT,
             name VARCHAR(255) NOT NULL,
             description TEXT,
@@ -65,7 +65,7 @@ func (d *Database) CreateIntentTable() error {
 
 func (d *Database) CreateEntityTable() error {
 	query := `
-        CREATE TABLE Entities (
+		CREATE TABLE IF NOT EXISTS Entities (
             id INT PRIMARY KEY AUTO_INCREMENT,
             name VARCHAR(255) NOT NULL,
             value VARCHAR(255) NOT NULL,
@@ -79,13 +79,28 @@ func (d *Database) CreateEntityTable() error {
 
 func (d *Database) CreateResponseTable() error {
 	query := `
-        CREATE TABLE Responses (
+		CREATE TABLE IF NOT EXISTS Responses (
             id INT PRIMARY KEY AUTO_INCREMENT,
             intent_id INT NOT NULL,
             message TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (intent_id) REFERENCES Intents(id)
+        );
+    `
+	_, err := d.DB.Exec(query)
+	return err
+}
+
+func (d *Database) CreateSessionTable() error {
+	query := `
+		CREATE TABLE IF NOT EXISTS Sessions (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            username VARCHAR(50) NOT NULL,
+            token VARCHAR(255) NOT NULL,
+			expiry TIMESTAMP NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
     `
 	_, err := d.DB.Exec(query)
@@ -109,6 +124,9 @@ func (d *Database) CreateAllTables() error {
 		return err
 	}
 	if err := d.CreateResponseTable(); err != nil {
+		return err
+	}
+	if err := d.CreateSessionTable(); err != nil {
 		return err
 	}
 	return nil
