@@ -1,0 +1,14 @@
+### Get Server
+GET http://localhost:8080/api/v1/
+
+### Register New User
+POST http://localhost:8080/api/v1/register
+Content-Type: application/json
+
+{
+    "full_name": "John Doe",
+    "username": "johndoess",
+    "password": "Password1*",
+    "email": "john@example.com"
+}
+
