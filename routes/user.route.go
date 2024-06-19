@@ -3,7 +3,6 @@ package routes
 import (
 	database "capstone-project/database"
 	"capstone-project/handler"
-	"capstone-project/middleware"
 	"capstone-project/repository"
 	"capstone-project/service"
 
@@ -29,7 +28,7 @@ func SetupUserRouter(router *gin.Engine, db *database.Database) *UserRouter {
 	version.GET("/", userRouter.handler.GetServer)
 	version.POST("/register", userRouter.handler.Register)
 	version.POST("/login", userRouter.handler.Login)
-	version.Use(middleware.Auth())
+	version.PATCH("/reset", userRouter.handler.ResetPassword)
 	version.DELETE("/remove/:id", userRouter.handler.RemoveUser)
 
 	return userRouter

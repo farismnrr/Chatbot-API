@@ -1,50 +1,35 @@
 package middleware
 
 import (
+	"capstone-project/helper"
 	"capstone-project/model"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 )
 
 func Auth() gin.HandlerFunc {
-	return gin.HandlerFunc(func(ctx *gin.Context) {
-		authHeader, err := ctx.Cookie("session_token")
-		if err != nil || authHeader == "" {
-			if ctx.Request.Header.Get("Content-Type") == "application/json" {
-				ctx.JSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
-				ctx.Abort()
-				return
-			}
-			ctx.Redirect(http.StatusSeeOther, "/login")
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
 			return
 		}
 
-		claims := &model.Claims{}
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+		if token == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "Bearer token not found"))
+			return
+		}
 
-		token, err := jwt.ParseWithClaims(authHeader, claims, func(token *jwt.Token) (interface{}, error) {
-			return model.JwtKey, nil
-		})
-
+		claims, err := helper.ValidateToken(token)
 		if err != nil {
-			if err == jwt.ErrSignatureInvalid {
-				ctx.JSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
-				ctx.Abort()
-				return
-			}
-			ctx.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Bad Request"))
-			ctx.Abort()
+			c.AbortWithStatusJSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "Invalid token"))
 			return
 		}
 
-		if !token.Valid {
-			ctx.JSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
-			ctx.Abort()
-			return
-		}
-
-		ctx.Set("username", claims.Username)
-		ctx.Next()
-	})
+		c.Set("claims", claims)
+		c.Next()
+	}
 }
