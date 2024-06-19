@@ -16,7 +16,6 @@ func main() {
 	}
 	defer db.Close()
 
-	// Create all tables in the database
 	if err := db.CreateAllTables(); err != nil {
 		log.Fatal(err)
 	}
