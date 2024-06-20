@@ -63,8 +63,6 @@ func (h *otpHandler) SendOTP(c *gin.Context) {
 		return
 	}
 
-	
-
 	c.JSON(http.StatusOK, model.NewOTPResponse(http.StatusOK, "OTP sent successfully", []model.OTP{{UserID: dbUser.ID, Expiry: otp.Expiry}}))
 }
 

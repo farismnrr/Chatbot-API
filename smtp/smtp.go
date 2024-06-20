@@ -18,7 +18,6 @@ func SendMailSimple(subject string, otp string, to string) error {
 		return err
 	}
 
-	// Replace the OTP value in the HTML content
 	htmlStr := string(html)
 	htmlStr = strings.ReplaceAll(htmlStr, "{{OTP}}", otp)
 
