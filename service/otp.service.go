@@ -1,13 +1,16 @@
 package service
 
 import (
+	"capstone-project/helper"
+	"capstone-project/model"
 	"capstone-project/repository"
+	"context"
 	"time"
 )
 
 type OTPService interface {
-	SetOTP(userID string, otpCode string, expiry time.Time) error
-	ValidateOTP(userID string, otpCode string) (bool, error)
+	GenerateOTP(ctx context.Context, userID int) (*model.OTP, error)
+	GetOTP(ctx context.Context, userID int, otpCode string) (string, error)
 }
 
 type otpService struct {
@@ -18,10 +21,20 @@ func NewOTPService(repository repository.OTPRepository) OTPService {
 	return &otpService{repository: repository}
 }
 
-func (s *otpService) SetOTP(userID string, otpCode string, expiry time.Time) error {
-	return s.repository.SetOTP(userID, otpCode, expiry)
+func (s *otpService) GenerateOTP(ctx context.Context, userID int) (*model.OTP, error) {
+	otp := &model.OTP{
+		UserID:  userID,
+		OTPCode: helper.GenerateOTPCode(),
+		Expiry:  time.Now().Add(time.Minute * 5),
+	}
+	err := s.repository.SetOTP(ctx, otp)
+	return otp, err
 }
 
-func (s *otpService) ValidateOTP(userID string, otpCode string) (bool, error) {
-	return s.repository.ValidateOTP(userID, otpCode)
+func (s *otpService) GetOTP(ctx context.Context, userID int, otpCode string) (string, error) {
+	otp, err := s.repository.GetOTP(ctx, userID, otpCode)
+	if err != nil {
+		return "", err
+	}
+	return otp, nil
 }

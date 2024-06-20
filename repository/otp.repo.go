@@ -2,12 +2,14 @@ package repository
 
 import (
 	database "capstone-project/database"
-	"time"
+	"capstone-project/model"
+	"context"
+	"strconv"
 )
 
 type OTPRepository interface {
-	SetOTP(userID string, otpCode string, expiry time.Time) error
-	ValidateOTP(userID string, otpCode string) (bool, error)
+	SetOTP(ctx context.Context, otp *model.OTP) error
+	GetOTP(ctx context.Context, userID int, otpCode string) (string, error)
 }
 
 type otpRepository struct {
@@ -18,23 +20,30 @@ func NewOTPRepository(redis *database.Redis) OTPRepository {
 	return &otpRepository{redis: redis}
 }
 
-func (r *otpRepository) SetOTP(userID string, otpCode string, expiry time.Time) error {
-	return r.redis.Client.Set(r.redis.Context, "otp:"+userID, otpCode, time.Until(expiry)).Err()
+func (r *otpRepository) SetOTP(ctx context.Context, otp *model.OTP) error {
+	key := "otp:" + strconv.Itoa(otp.UserID)
+	exists, err := r.redis.Client.Exists(ctx, key).Result()
+	if err != nil {
+		return err
+	}
+	if exists != 0 {
+		err := r.redis.Client.Del(ctx, key).Err()
+		if err != nil {
+			return err
+		}
+	}
+	return r.redis.Client.HSet(ctx, key, "otp_code", otp.OTPCode, "expiry", otp.Expiry).Err()
 }
 
-func (r *otpRepository) ValidateOTP(userID string, otpCode string) (bool, error) {
-	otp, err := r.redis.Client.Get(r.redis.Context, "otp:"+userID).Result()
+func (r *otpRepository) GetOTP(ctx context.Context, userID int, otpCode string) (string, error) {
+	key := "otp:" + strconv.Itoa(userID)
+	otp, err := r.redis.Client.HGet(ctx, key, "otp_code").Result()
 	if err != nil {
-		return false, err
+		return "", err
 	}
 
 	if otp != otpCode {
-		return false, nil
+		return "", nil
 	}
-
-	err = r.redis.Client.Del(r.redis.Context, "otp:"+userID).Err()
-	if err != nil {
-		return false, err
-	}
-	return true, nil
+	return otp, nil
 }

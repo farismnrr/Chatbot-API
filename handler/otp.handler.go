@@ -1,12 +1,11 @@
 package handler
 
 import (
-	"capstone-project/helper"
 	"capstone-project/model"
 	"capstone-project/service"
 	"capstone-project/smtp"
 	"net/http"
-	"time"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,63 +51,64 @@ func (h *otpHandler) SendOTP(c *gin.Context) {
 		return
 	}
 
-	otpCode := helper.GenerateOTPCode()
-	err = h.otpService.SetOTP(user.Email, otpCode, time.Now().Add(time.Minute*5))
+	otp, err := h.otpService.GenerateOTP(c, dbUser.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	err = smtp.SendMailSimple("Verification Code", otpCode, user.Email)
+	err = smtp.SendMailSimple("Verification Code", otp.OTPCode, user.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.NewOTPResponse(http.StatusOK, "OTP sent successfully", []model.OTP{{UserID: dbUser.ID}}))
+	
+
+	c.JSON(http.StatusOK, model.NewOTPResponse(http.StatusOK, "OTP sent successfully", []model.OTP{{UserID: dbUser.ID, Expiry: otp.Expiry}}))
 }
 
 func (h *otpHandler) VerifyOTP(c *gin.Context) {
-	// var otp model.OTP
-	// err := c.ShouldBindJSON(&otp)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Invalid request payload"))
-	// 	return
-	// }
+	var otp model.OTP
+	err := c.ShouldBindJSON(&otp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Invalid request payload"))
+		return
+	}
 
-	// if otp.OTPCode == "" {
-	// 	c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "OTP code is required"))
-	// 	return
-	// }
+	if otp.OTPCode == "" {
+		c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "OTP code is required"))
+		return
+	}
 
-	// userID, err := strconv.Atoi(c.Param("id"))
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Invalid user ID"))
-	// 	return
-	// }
+	userID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Invalid user ID"))
+		return
+	}
 
-	// err = h.userService.GetUserById(userID)
-	// if err != nil {
-	// 	c.JSON(http.StatusNotFound, model.NewErrorResponse(http.StatusNotFound, "User not found"))
-	// 	return
-	// }
+	err = h.userService.GetUserById(userID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, model.NewErrorResponse(http.StatusNotFound, "User not found"))
+		return
+	}
 
-	// _, err = h.userService.GetUserTable()
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
-	// 	return
-	// }
+	_, err = h.userService.GetUserTable()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
 
-	// verified, err := h.otpService.ValidateOTP(strconv.Itoa(userID), otp.OTPCode)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
-	// 	return
-	// }
+	getOTP, err := h.otpService.GetOTP(c, userID, otp.OTPCode)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
 
-	// if !verified {
-	// 	c.JSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "OTP code is invalid"))
-	// 	return
-	// }
+	if getOTP != otp.OTPCode {
+		c.JSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "OTP code is invalid"))
+		return
+	}
 
-	// c.JSON(http.StatusOK, model.NewOTPResponse(http.StatusOK, "OTP verified successfully", []model.OTP{{UserID: userID}})
+	c.JSON(http.StatusOK, model.NewOTPResponse(http.StatusOK, "OTP verified successfully", []model.OTP{{UserID: userID, OTPCode: getOTP}}))
 }
