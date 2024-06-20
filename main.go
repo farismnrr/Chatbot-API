@@ -1,10 +1,9 @@
 package main
 
 import (
-	"log"
-
 	"capstone-project/database"
 	"capstone-project/routes"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )

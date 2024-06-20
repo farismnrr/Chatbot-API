@@ -85,6 +85,14 @@ func ValidateToken(token string) (*model.Claims, error) {
 	return claims, nil
 }
 
+func ValidateUser(token string) (string, string, error) {
+	claims, err := ValidateToken(token)
+	if err != nil {
+		return "", "", err
+	}
+	return claims.Username, claims.Role, nil
+}
+
 func GenerateOTPCode() string {
 	rand.Seed(time.Now().UnixNano())
 	digits := []rune("0123456789")

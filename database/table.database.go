@@ -49,64 +49,6 @@ func (d *Database) CreateMessageTable() error {
 	return err
 }
 
-func (d *Database) CreateIntentTable() error {
-	query := `
-		CREATE TABLE IF NOT EXISTS Intents (
-            id INT PRIMARY KEY AUTO_INCREMENT,
-            name VARCHAR(255) NOT NULL,
-            description TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        );
-    `
-	_, err := d.DB.Exec(query)
-	return err
-}
-
-func (d *Database) CreateEntityTable() error {
-	query := `
-		CREATE TABLE IF NOT EXISTS Entities (
-            id INT PRIMARY KEY AUTO_INCREMENT,
-            name VARCHAR(255) NOT NULL,
-            value VARCHAR(255) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        );
-    `
-	_, err := d.DB.Exec(query)
-	return err
-}
-
-func (d *Database) CreateResponseTable() error {
-	query := `
-		CREATE TABLE IF NOT EXISTS Responses (
-            id INT PRIMARY KEY AUTO_INCREMENT,
-            intent_id INT NOT NULL,
-            message TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (intent_id) REFERENCES Intents(id)
-        );
-    `
-	_, err := d.DB.Exec(query)
-	return err
-}
-
-func (d *Database) CreateSessionTable() error {
-	query := `
-		CREATE TABLE IF NOT EXISTS Sessions (
-            id INT PRIMARY KEY AUTO_INCREMENT,
-            username VARCHAR(50) NOT NULL,
-            token VARCHAR(255) NOT NULL,
-			expiry TIMESTAMP NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        );
-    `
-	_, err := d.DB.Exec(query)
-	return err
-}
-
 func (d *Database) CreateAllTables() error {
 	if err := d.CreateUserTable(); err != nil {
 		return err
@@ -115,18 +57,6 @@ func (d *Database) CreateAllTables() error {
 		return err
 	}
 	if err := d.CreateMessageTable(); err != nil {
-		return err
-	}
-	if err := d.CreateIntentTable(); err != nil {
-		return err
-	}
-	if err := d.CreateEntityTable(); err != nil {
-		return err
-	}
-	if err := d.CreateResponseTable(); err != nil {
-		return err
-	}
-	if err := d.CreateSessionTable(); err != nil {
 		return err
 	}
 	return nil

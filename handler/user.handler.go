@@ -1,9 +1,13 @@
 package handler
 
 import (
+	"bytes"
+	"capstone-project/api"
 	"capstone-project/helper"
 	"capstone-project/model"
 	"capstone-project/service"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,7 +15,7 @@ import (
 )
 
 type userHandler struct {
-	userService service.UserService
+	userService    service.UserService
 	sessionService service.SessionService
 }
 
@@ -21,6 +25,7 @@ type UserHandler interface {
 	Login(c *gin.Context)
 	ResetPassword(c *gin.Context)
 	RemoveUser(c *gin.Context)
+	RequestAPI(c *gin.Context)
 }
 
 func NewUserHandler(userService service.UserService, sessionService service.SessionService) *userHandler {
@@ -227,4 +232,28 @@ func (h *userHandler) RemoveUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.NewSuccessResponse(http.StatusOK, "User removed successfully"))
+}
+
+func (h *userHandler) RequestAPI(c *gin.Context) {
+	var response model.Message
+	if err := c.ShouldBindJSON(&response); err != nil {
+		c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Invalid request payload"))
+		return
+	}
+
+	body, err := api.FetchAPI(response.Message)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, body, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.NewSuccessResponse(http.StatusOK, prettyJSON.String()))
 }

@@ -1,9 +1,9 @@
 package handler
 
 import (
+	"capstone-project/api"
 	"capstone-project/model"
 	"capstone-project/service"
-	"capstone-project/smtp"
 	"net/http"
 	"strconv"
 
@@ -57,7 +57,7 @@ func (h *otpHandler) SendOTP(c *gin.Context) {
 		return
 	}
 
-	err = smtp.SendMailSimple("Verification Code", otp.OTPCode, user.Email)
+	err = api.SendMailSimple("Verification Code", otp.OTPCode, user.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return

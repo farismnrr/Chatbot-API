@@ -3,7 +3,6 @@ package routes
 import (
 	database "capstone-project/database"
 	"capstone-project/handler"
-	"capstone-project/middleware"
 	"capstone-project/repository"
 	"capstone-project/service"
 
@@ -11,12 +10,12 @@ import (
 )
 
 type UserRouter struct {
-	handler    handler.UserHandler
-	otpHandler handler.OTPHandler
+	userHandler handler.UserHandler
+	otpHandler  handler.OTPHandler
 }
 
-func NewUserRouter(handler handler.UserHandler, otpHandler handler.OTPHandler) *UserRouter {
-	return &UserRouter{handler: handler, otpHandler: otpHandler}
+func NewUserRouter(userHandler handler.UserHandler, otpHandler handler.OTPHandler) *UserRouter {
+	return &UserRouter{userHandler: userHandler, otpHandler: otpHandler}
 }
 
 func SetupUserRouter(router *gin.Engine, db *database.Database, redis *database.Redis) *UserRouter {
@@ -34,13 +33,14 @@ func SetupUserRouter(router *gin.Engine, db *database.Database, redis *database.
 	userRouter := NewUserRouter(userHandler, otpHandler)
 
 	version := router.Group("/api/v1")
-	version.GET("/", userRouter.handler.GetServer)
-	version.POST("/register", userRouter.handler.Register)
-	version.POST("/login", userRouter.handler.Login)
-	version.PATCH("/reset", userRouter.handler.ResetPassword)
+	version.GET("/", userRouter.userHandler.GetServer)
+	version.POST("/register", userRouter.userHandler.Register)
+	version.POST("/login", userRouter.userHandler.Login)
+	version.PATCH("/reset", userRouter.userHandler.ResetPassword)
 
-	version.Use(middleware.AuthMiddleware())
-	version.DELETE("/remove/:id", userRouter.handler.RemoveUser)
+	// version.Use(middleware.AuthMiddleware())
+	version.DELETE("/remove/:id", userRouter.userHandler.RemoveUser)
+	version.POST("/request", userRouter.userHandler.RequestAPI)
 
 	otp := version.Group("/otp")
 	otp.POST("/send", userRouter.otpHandler.SendOTP)

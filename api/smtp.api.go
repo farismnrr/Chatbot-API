@@ -1,4 +1,4 @@
-package smtp
+package api
 
 import (
 	"capstone-project/helper"

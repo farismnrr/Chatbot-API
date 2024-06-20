@@ -43,6 +43,15 @@ Content-Type: application/json
     "otp_code": "335938"
 }
 
+### Request API
+POST http://localhost:8080/api/v1/request
+# Authorization: Bearer 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
+Content-Type: application/json
+
+{
+    "message": "What is the weather in Jakarta?"
+}
+
 ### Get Server
 GET http://localhost:8080/api/v1/
 
