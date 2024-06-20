@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"time"
 
@@ -82,4 +83,14 @@ func ValidateToken(token string) (*model.Claims, error) {
 		return nil, errors.New("invalid token")
 	}
 	return claims, nil
+}
+
+func GenerateOTPCode() string {
+	rand.Seed(time.Now().UnixNano())
+	digits := []rune("0123456789")
+	otpCode := make([]rune, 6)
+	for i := range otpCode {
+		otpCode[i] = digits[rand.Intn(len(digits))]
+	}
+	return string(otpCode)
 }

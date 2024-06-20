@@ -16,11 +16,17 @@ func main() {
 	}
 	defer db.Close()
 
+	client, err := database.NewRedisConnection()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Close()
+
 	if err := db.CreateAllTables(); err != nil {
 		log.Fatal(err)
 	}
 
 	router := gin.Default()
-	routes.SetupUserRouter(router, db)
+	routes.SetupUserRouter(router, db, client)
 	router.Run()
 }

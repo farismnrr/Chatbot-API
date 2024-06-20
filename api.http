@@ -3,9 +3,9 @@ POST http://localhost:8080/api/v1/register
 Content-Type: application/json
 
 {
-    "full_name": "John Doe",
-    "username": "johndoe",
-    "email": "johns@example.com",
+    "full_name": "Faris Munir Mahdi",
+    "username": "farismunir",
+    "email": "farismunir2@gmail.com",
     "password": "Password1*"
 }
 
@@ -27,9 +27,27 @@ Content-Type: application/json
     "password": "Password1*"
 }
 
+### Send OTP
+POST http://localhost:8080/api/v1/otp/send
+Content-Type: application/json
+
+{
+    "email": "farismunir2@gmail.com"
+}
+
+### Verify OTP
+POST http://localhost:8080/api/v1/otp/verify/1
+Content-Type: application/json
+
+{
+    "otp_code": "549630"
+}
+
+### Validate OTP
+DELETE http://localhost:8080/api/v1/otp/validate/4
 ### Get Server
 GET http://localhost:8080/api/v1/
 
 ### Remove User
-DELETE http://localhost:8080/api/v1/remove/23
+DELETE http://localhost:8080/api/v1/remove/24
 

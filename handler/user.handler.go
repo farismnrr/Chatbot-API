@@ -194,9 +194,15 @@ func (h *userHandler) RemoveUser(c *gin.Context) {
 		return
 	}
 
-	_, err = h.service.GetUserById(id)
+	err = h.service.GetUserById(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, model.NewErrorResponse(http.StatusNotFound, "User not found"))
+		return
+	}
+
+	_, err = h.service.GetUserTable()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 

@@ -1,6 +1,8 @@
 package model
 
-import "github.com/golang-jwt/jwt"
+import (
+	"github.com/golang-jwt/jwt"
+)
 
 var JwtKey = []byte("secret-key")
 
@@ -11,8 +13,8 @@ type Claims struct {
 }
 
 type JWTSuccessResponse struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Code    int           `json:"code"`
+	Message string        `json:"message"`
 	Data    []JWTResponse `json:"data"`
 }
 
