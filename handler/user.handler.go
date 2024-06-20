@@ -15,21 +15,23 @@ import (
 )
 
 type userHandler struct {
-	userService    service.UserService
-	sessionService service.SessionService
+	userService         service.UserService
+	sessionService      service.SessionService
+	conversationService service.ConversationService
 }
 
 type UserHandler interface {
 	GetServer(c *gin.Context)
 	Register(c *gin.Context)
 	Login(c *gin.Context)
+	Logout(c *gin.Context)
 	ResetPassword(c *gin.Context)
 	RemoveUser(c *gin.Context)
 	RequestAPI(c *gin.Context)
 }
 
-func NewUserHandler(userService service.UserService, sessionService service.SessionService) *userHandler {
-	return &userHandler{userService: userService, sessionService: sessionService}
+func NewUserHandler(userService service.UserService, sessionService service.SessionService, conversationService service.ConversationService) *userHandler {
+	return &userHandler{userService: userService, sessionService: sessionService, conversationService: conversationService}
 }
 
 func (h *userHandler) GetServer(c *gin.Context) {
@@ -140,20 +142,56 @@ func (h *userHandler) Login(c *gin.Context) {
 		return
 	}
 
-	_, err = h.sessionService.GenerateSession(c, dbUser.ID, dbUser.Username)
+	tokenSession, _ := h.sessionService.GetSession(c, dbUser.ID)
+	model.TokenBlacklist[tokenSession] = true
+
+	err = h.sessionService.DeleteSession(c, dbUser.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	//Dummy Get Token
-	token, err := h.sessionService.GetSession(c, dbUser.ID)
+	token, err := h.sessionService.GenerateSession(c, dbUser.ID, dbUser.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.NewJWTSuccessResponse(http.StatusOK, "Login successful", []model.JWTResponse{{Token: token}}))
+	c.JSON(http.StatusOK, model.NewJWTSuccessResponse(http.StatusOK, "Login successful", []model.JWTResponse{{UserID: dbUser.ID, Token: token.Token}}))
+}
+
+func (h *userHandler) Logout(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Invalid user ID"))
+		return
+	}
+
+	err = h.userService.GetUserById(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, model.NewErrorResponse(http.StatusNotFound, "User not found"))
+		return
+	}
+
+	_, err = h.userService.GetUserTable()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	_, err = h.sessionService.GetSession(c, id)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
+		return
+	}
+
+	err = h.sessionService.DeleteSession(c, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.NewSuccessResponse(http.StatusOK, "Logout successful"))
 }
 
 func (h *userHandler) ResetPassword(c *gin.Context) {
@@ -235,9 +273,39 @@ func (h *userHandler) RemoveUser(c *gin.Context) {
 }
 
 func (h *userHandler) RequestAPI(c *gin.Context) {
-	var response model.Message
+	var response model.MessageData
 	if err := c.ShouldBindJSON(&response); err != nil {
 		c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Invalid request payload"))
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Invalid user ID"))
+		return
+	}
+
+	err = h.userService.GetUserById(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, model.NewErrorResponse(http.StatusNotFound, "User not found"))
+		return
+	}
+
+	dbUser, err := h.userService.GetUserTable()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	_, err = h.sessionService.GetSession(c, id)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, model.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
+		return
+	}
+
+	err = h.conversationService.CreateConversation(model.NewConversation(dbUser.ID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
@@ -248,12 +316,19 @@ func (h *userHandler) RequestAPI(c *gin.Context) {
 	}
 
 	var prettyJSON bytes.Buffer
-	err = json.Indent(&prettyJSON, body, "", "  ")
+	err = json.Indent(&prettyJSON, []byte(body), "", "  ")
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.NewSuccessResponse(http.StatusOK, prettyJSON.String()))
+	c.JSON(http.StatusOK, model.SuccessResponse{
+		Code:    http.StatusOK,
+		Message: "Success",
+		Data: model.MessageData{
+			UserID:  dbUser.ID,
+			Message: prettyJSON.String(),
+		},
+	})
 }

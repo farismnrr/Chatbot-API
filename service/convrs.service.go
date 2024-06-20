@@ -10,8 +10,8 @@ type conversationService struct {
 }
 
 type ConversationService interface {
-	GetConversation(id int) (model.Conversation, error)
-	CreateConversation(status string, conversation model.Conversation) error
+	GetConversation(id int) (*model.Conversation, error)
+	CreateConversation(conversation model.Conversation) error
 	DeleteConversation(id int) error
 }
 
@@ -19,12 +19,12 @@ func NewConversationService(repo repository.ConversationRepository) *conversatio
 	return &conversationService{repo: repo}
 }
 
-func (s *conversationService) GetConversation(id int, fullName string, status string) (*model.Conversation, error) {
-	return s.repo.GetConversation(id, fullName, status)
+func (s *conversationService) GetConversation(id int) (*model.Conversation, error) {
+	return s.repo.GetConversation(id)
 }
 
-func (s *conversationService) CreateConversation(status string, conversation model.Conversation) error {
-	return s.repo.CreateConversation(status, conversation)
+func (s *conversationService) CreateConversation(conversation model.Conversation) error {
+	return s.repo.CreateConversation(conversation)
 }
 
 func (s *conversationService) DeleteConversation(id int) error {

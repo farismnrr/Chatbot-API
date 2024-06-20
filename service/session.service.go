@@ -23,7 +23,7 @@ func NewSessionService(repository repository.SessionRepository) *sessionService 
 }
 
 func (s *sessionService) GenerateSession(ctx context.Context, userID int, username string) (*model.Session, error) {
-	token, err := helper.GenerateToken(username, "user")
+	token, err := helper.GenerateToken(username, "user", "active")
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func (s *sessionService) GenerateSession(ctx context.Context, userID int, userna
 		Token:  token,
 		Expiry: time.Now().Add(time.Hour * 24),
 	}
-	err = s.repository.CreateSession(ctx, session)
+	err = s.repository.CreateSession(ctx, session.UserID, session.Token)
 	if err != nil {
 		return nil, err
 	}

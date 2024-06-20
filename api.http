@@ -44,17 +44,21 @@ Content-Type: application/json
 }
 
 ### Request API
-POST http://localhost:8080/api/v1/request
-# Authorization: Bearer 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
+POST http://localhost:8080/api/v1/request/28
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTE2NjAwNCwiaWF0IjoxNzE4OTA2ODA0LCJpc3MiOiJBc2tJTiEifQ.oxFjW5JyFcui0VOWMSimvhHEHU7WD41bke7-PxHl5PA
 Content-Type: application/json
 
 {
-    "message": "What is the weather in Jakarta?"
+    "message": "Buatlah sebuah program Go, Clean Architecture, dan Gin!"
 }
+
+### Logout
+DELETE http://localhost:8080/api/v1/logout/28
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTE2NTQzMywiaWF0IjoxNzE4OTA2MjMzLCJpc3MiOiJBc2tJTiEifQ.DvAfJJKPSRoECxBUE2kuH_SnALlMhOl1Tuz6DyUEyRc
 
 ### Get Server
 GET http://localhost:8080/api/v1/
 
 ### Remove User
-DELETE http://localhost:8080/api/v1/remove/27
+DELETE http://localhost:8080/api/v1/remove/28
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsImV4cCI6MTcxOTExNjQ4MywiaWF0IjoxNzE4ODU3MjgzLCJpc3MiOiJBc2tJTiJ9.sEUV3-G5OaMRA4dmBJcUoj-SGDHwzWQN9NwNh0OkBYU

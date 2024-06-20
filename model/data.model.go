@@ -8,6 +8,7 @@ type User struct {
 	Username  string    `json:"username"`
 	Password  string    `json:"password"`
 	Email     string    `json:"email"`
+	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
@@ -16,6 +17,14 @@ type Conversation struct {
 	UserID    int       `json:"user_id"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+}
+
+type MessageData struct {
+	ID             int       `json:"id,omitempty"`
+	ConversationID int       `json:"conversation_id,omitempty"`
+	UserID         int       `json:"user_id,omitempty"`
+	Message        string    `json:"message,omitempty"`
+	CreatedAt      time.Time `json:"created_at,omitempty"`
 }
 
 type RequestBody struct {
@@ -28,22 +37,15 @@ type RequestBody struct {
 	} `json:"messages"`
 }
 
-type Message struct {
-	ID             int       `json:"id"`
-	ConversationID int       `json:"conversation_id"`
-	UserID         int       `json:"user_id"`
-	Message        string    `json:"message"`
-	CreatedAt      time.Time `json:"created_at"`
-}
-
 type ErrorResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
 type SuccessResponse struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    MessageData `json:"data,omitempty"`
 }
 
 type Session struct {
@@ -56,12 +58,12 @@ func NewUser(fullName string, username string, password string, email string) *U
 	return &User{FullName: fullName, Username: username, Password: password, Email: email}
 }
 
-func NewConversation(userID int) *Conversation {
-	return &Conversation{UserID: userID}
+func NewConversation(userID int) Conversation {
+	return Conversation{UserID: userID}
 }
 
-func NewMessage(conversationID int, userID int, message string) *Message {
-	return &Message{ConversationID: conversationID, UserID: userID, Message: message}
+func NewMessage(conversationID int, userID int, message string) *MessageData {
+	return &MessageData{ConversationID: conversationID, UserID: userID, Message: message}
 }
 
 func NewErrorResponse(code int, message string) *ErrorResponse {

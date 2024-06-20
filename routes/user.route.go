@@ -3,6 +3,7 @@ package routes
 import (
 	database "capstone-project/database"
 	"capstone-project/handler"
+	"capstone-project/middleware"
 	"capstone-project/repository"
 	"capstone-project/service"
 
@@ -22,12 +23,14 @@ func SetupUserRouter(router *gin.Engine, db *database.Database, redis *database.
 	userRepo := repository.NewUserRepository(db)
 	sessionRepo := repository.NewSessionRepository(redis)
 	otpRepo := repository.NewOTPRepository(redis)
+	conversationRepo := repository.NewConversationRepository(db)
 
 	userService := service.NewUserService(userRepo)
 	sessionService := service.NewSessionService(sessionRepo)
 	otpService := service.NewOTPService(otpRepo)
+	conversationService := service.NewConversationService(conversationRepo)
 
-	userHandler := handler.NewUserHandler(userService, sessionService)
+	userHandler := handler.NewUserHandler(userService, sessionService, conversationService)
 	otpHandler := handler.NewOTPHandler(otpService, userService)
 
 	userRouter := NewUserRouter(userHandler, otpHandler)
@@ -38,9 +41,10 @@ func SetupUserRouter(router *gin.Engine, db *database.Database, redis *database.
 	version.POST("/login", userRouter.userHandler.Login)
 	version.PATCH("/reset", userRouter.userHandler.ResetPassword)
 
-	// version.Use(middleware.AuthMiddleware())
+	version.Use(middleware.AuthMiddleware())
+	version.DELETE("/logout/:id", userRouter.userHandler.Logout)
 	version.DELETE("/remove/:id", userRouter.userHandler.RemoveUser)
-	version.POST("/request", userRouter.userHandler.RequestAPI)
+	version.POST("/request/:id", userRouter.userHandler.RequestAPI)
 
 	otp := version.Group("/otp")
 	otp.POST("/send", userRouter.otpHandler.SendOTP)

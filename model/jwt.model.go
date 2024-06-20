@@ -4,11 +4,10 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var JwtKey = []byte("secret-key")
-
 type Claims struct {
 	Username string `json:"username"`
 	Role     string `json:"role"`
+	Status   string `json:"status"`
 	jwt.StandardClaims
 }
 
@@ -19,9 +18,12 @@ type JWTSuccessResponse struct {
 }
 
 type JWTResponse struct {
-	Token string `json:"token"`
+	UserID int    `json:"user_id"`
+	Token  string `json:"token"`
 }
 
 func NewJWTSuccessResponse(code int, message string, data []JWTResponse) *JWTSuccessResponse {
 	return &JWTSuccessResponse{Code: code, Message: message, Data: data}
 }
+
+var TokenBlacklist = make(map[string]bool)

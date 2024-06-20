@@ -38,13 +38,14 @@ func UseCertificate() (key string, err error) {
 	return key, nil
 }
 
-func GenerateToken(username string, role string) (string, error) {
+func GenerateToken(username string, role string, status string) (string, error) {
 	claims := model.Claims{
 		Username: username,
 		Role:     role,
+		Status:   status,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(72 * time.Hour).Unix(),
-			Issuer:    "AskIN",
+			Issuer:    "AskIN!",
 			IssuedAt:  time.Now().Unix(),
 		},
 	}
@@ -82,15 +83,20 @@ func ValidateToken(token string) (*model.Claims, error) {
 	if !tkn.Valid {
 		return nil, errors.New("invalid token")
 	}
+
+	if _, ok := model.TokenBlacklist[token]; ok {
+		return nil, errors.New("token has been used before")
+	}
+
 	return claims, nil
 }
 
-func ValidateUser(token string) (string, string, error) {
+func ValidateUser(token string) (string, string, string, error) {
 	claims, err := ValidateToken(token)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
-	return claims.Username, claims.Role, nil
+	return claims.Username, claims.Role, claims.Status, nil
 }
 
 func GenerateOTPCode() string {
