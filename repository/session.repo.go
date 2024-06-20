@@ -3,68 +3,49 @@ package repository
 import (
 	database "capstone-project/database"
 	"capstone-project/model"
-	"time"
+	"context"
+	"strconv"
 )
 
 type sessionRepository struct {
-	DB *database.Database
+	redis *database.Redis
 }
 
 type SessionRepository interface {
-	CreateSession(session model.Session) error
-	UpdateSession(session model.Session) error
-	DeleteSession(token string) error
-	GetSessionByUsername(username string) (model.Session, error)
-	GetSessionByToken(token string) (model.Session, error)
-	TokenExpired(session model.Session) bool
-	TokenValidity(token string) (model.Session, error)
+	CreateSession(ctx context.Context, session *model.Session) error
+	GetSession(ctx context.Context, sessionID int) (string, error)
+	DeleteSession(ctx context.Context, sessionID int) error
 }
 
-func NewSessionRepository(db *database.Database) *sessionRepository {
-	return &sessionRepository{DB: db}
+func NewSessionRepository(redis *database.Redis) *sessionRepository {
+	return &sessionRepository{redis: redis}
 }
 
-func (r *sessionRepository) CreateSession(session model.Session) error {
-	return r.DB.DB.QueryRow("INSERT INTO Sessions (username, token, expiry) VALUES (?, ?, ?)", session.Username, session.Token, session.Expiry).Err()
-}
-
-func (r *sessionRepository) UpdateSession(session model.Session) error {
-	return r.DB.DB.QueryRow("UPDATE Sessions SET token = ?, expiry = ? WHERE username = ?", session.Token, session.Expiry, session.Username).Err()
-}
-
-func (r *sessionRepository) DeleteSession(token string) error {
-	return r.DB.DB.QueryRow("DELETE FROM Sessions WHERE token = ?", token).Err()
-}
-
-func (r *sessionRepository) GetSessionByUsername(username string) (model.Session, error) {
-	var session model.Session
-	err := r.DB.DB.QueryRow("SELECT username, token, expiry FROM Sessions WHERE username = ?", username).Scan(&session.Username, &session.Token, &session.Expiry)
-	return session, err
-}
-
-func (r *sessionRepository) GetSessionByToken(token string) (model.Session, error) {
-	var session model.Session
-	err := r.DB.DB.QueryRow("SELECT username, token, expiry FROM Sessions WHERE token = ?", token).Scan(&session.Username, &session.Token, &session.Expiry)
-	return session, err
-}
-
-func (r *sessionRepository) TokenExpired(session model.Session) bool {
-	return session.Expiry.Before(time.Now())
-}
-
-func (r *sessionRepository) TokenValidity(token string) (model.Session, error) {
-	session, err := r.GetSessionByToken(token)
+func (r *sessionRepository) CreateSession(ctx context.Context, session *model.Session) error {
+	key := "session:" + strconv.Itoa(session.UserID)
+	exists, err := r.redis.Client.Exists(ctx, key).Result()
 	if err != nil {
-		return model.Session{}, err
+		return err
 	}
-
-	if r.TokenExpired(session) {
-		err := r.DeleteSession(token)
+	if exists != 0 {
+		err := r.redis.Client.Del(ctx, key).Err()
 		if err != nil {
-			return model.Session{}, err
+			return err
 		}
-		return model.Session{}, err
 	}
+	return r.redis.Client.HSet(ctx, key, "token", session.Token, "expiry", session.Expiry).Err()
+}
 
+func (r *sessionRepository) GetSession(ctx context.Context, sessionID int) (string, error) {
+	key := "session:" + strconv.Itoa(sessionID)
+	session, err := r.redis.Client.HGet(ctx, key, "token").Result()
+	if err != nil {
+		return "", err
+	}
 	return session, nil
+}
+
+func (r *sessionRepository) DeleteSession(ctx context.Context, sessionID int) error {
+	key := "session:" + strconv.Itoa(sessionID)
+	return r.redis.Client.Del(ctx, key).Err()
 }

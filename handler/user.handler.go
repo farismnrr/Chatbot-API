@@ -11,7 +11,8 @@ import (
 )
 
 type userHandler struct {
-	service service.UserService
+	userService service.UserService
+	sessionService service.SessionService
 }
 
 type UserHandler interface {
@@ -22,8 +23,8 @@ type UserHandler interface {
 	RemoveUser(c *gin.Context)
 }
 
-func NewUserHandler(service service.UserService) *userHandler {
-	return &userHandler{service: service}
+func NewUserHandler(userService service.UserService, sessionService service.SessionService) *userHandler {
+	return &userHandler{userService: userService, sessionService: sessionService}
 }
 
 func (h *userHandler) GetServer(c *gin.Context) {
@@ -82,7 +83,7 @@ func (h *userHandler) Register(c *gin.Context) {
 	hashedPassword := helper.GenerateHash(user.Password)
 	user.Password = hashedPassword
 
-	err := h.service.CreateUser(user)
+	err := h.userService.CreateUser(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
@@ -107,20 +108,20 @@ func (h *userHandler) Login(c *gin.Context) {
 	}
 
 	if user.Username != "" {
-		err := h.service.GetUserByUsername(user)
+		err := h.userService.GetUserByUsername(user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, "Username Incorrect"))
 			return
 		}
 	} else if user.Email != "" {
-		err := h.service.GetUserByEmail(user)
+		err := h.userService.GetUserByEmail(user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, "Email Incorrect"))
 			return
 		}
 	}
 
-	dbUser, err := h.service.GetUserTable()
+	dbUser, err := h.userService.GetUserTable()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
@@ -134,7 +135,14 @@ func (h *userHandler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := helper.GenerateToken(user.Username, "user")
+	_, err = h.sessionService.GenerateSession(c, dbUser.ID, dbUser.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	//Dummy Get Token
+	token, err := h.sessionService.GetSession(c, dbUser.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
@@ -178,7 +186,7 @@ func (h *userHandler) ResetPassword(c *gin.Context) {
 	hashedPassword := helper.GenerateHash(user.Password)
 	user.Password = hashedPassword
 
-	err := h.service.UpdateUserByEmail(user.Email, user)
+	err := h.userService.UpdateUserByEmail(user.Email, user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
@@ -194,19 +202,25 @@ func (h *userHandler) RemoveUser(c *gin.Context) {
 		return
 	}
 
-	err = h.service.GetUserById(id)
+	err = h.userService.GetUserById(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, model.NewErrorResponse(http.StatusNotFound, "User not found"))
 		return
 	}
 
-	_, err = h.service.GetUserTable()
+	_, err = h.userService.GetUserTable()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	err = h.service.DeleteUserById(id)
+	err = h.sessionService.DeleteSession(c, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	err = h.userService.DeleteUserById(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
