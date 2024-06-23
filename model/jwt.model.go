@@ -19,7 +19,6 @@ type JWTSuccessResponse struct {
 
 type JWTResponse struct {
 	UserID int    `json:"user_id"`
-	Token  string `json:"token"`
 }
 
 func NewJWTSuccessResponse(code int, message string, data []JWTResponse) *JWTSuccessResponse {

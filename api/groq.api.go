@@ -10,10 +10,10 @@ import (
 	"net/http"
 )
 
-func FetchAPI(query string) (string, error) {
+func FetchAPI(query string) ([]byte, error) {
 	token := helper.GetEnv("GROQ_API_KEY")
 
-	rb := model.RequestBody{
+	rb := model.GroqRequest{
 		Model: "llama3-70b-8192",
 		User:  "farismnrr",
 		Messages: []struct {
@@ -32,13 +32,13 @@ func FetchAPI(query string) (string, error) {
 	jsonData, err := json.Marshal(rb)
 	if err != nil {
 		fmt.Println(err)
-		return "", err
+		return nil, err
 	}
 
 	req, err := http.NewRequest("POST", "https://api.groq.com/openai/v1/chat/completions", bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Println(err)
-		return "", err
+		return nil, err
 	}
 
 	req.Header.Set("Authorization", "Bearer "+token)
@@ -48,7 +48,7 @@ func FetchAPI(query string) (string, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println(err)
-		return "", err
+		return nil, err
 	}
 
 	defer resp.Body.Close()
@@ -56,8 +56,8 @@ func FetchAPI(query string) (string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)
-		return "", err
+		return nil, err
 	}
 
-	return string(body), nil
+	return body, nil
 }
