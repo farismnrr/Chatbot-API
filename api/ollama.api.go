@@ -13,7 +13,7 @@ import (
 func FetchAPI(query string) ([]byte, error) {
 	token := helper.GetEnv("OLLAMA_API_KEY")
 
-	rb := model.GroqRequest{
+	rb := model.OllamaRequest{
 		Model: "llama3-70b-8192",
 		User:  "farismnrr",
 		Messages: []struct {

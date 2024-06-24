@@ -1,6 +1,6 @@
 package model
 
-type GroqRequest struct {
+type OllamaRequest struct {
 	Model    string `json:"model"`
 	User     string `json:"user"`
 	Messages []struct {
