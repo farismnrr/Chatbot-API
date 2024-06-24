@@ -11,7 +11,7 @@ import (
 )
 
 func FetchAPI(query string) ([]byte, error) {
-	token := helper.GetEnv("GROQ_API_KEY")
+	token := helper.GetEnv("OLLAMA_API_KEY")
 
 	rb := model.GroqRequest{
 		Model: "llama3-70b-8192",
@@ -35,7 +35,9 @@ func FetchAPI(query string) ([]byte, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", "https://api.groq.com/openai/v1/chat/completions", bytes.NewBuffer(jsonData))
+	url := helper.GetEnv("OLLAMA_API_URL")
+
+	req, err := http.NewRequest("POST", url+"/chat/completions", bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

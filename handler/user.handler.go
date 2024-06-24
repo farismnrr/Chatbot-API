@@ -361,7 +361,13 @@ func (h *userHandler) CreateMessage(c *gin.Context) {
 		return
 	}
 
-	convID, err := h.conversationService.GetConversation(conversation.UserID)
+	convID, err := strconv.Atoi(c.Param("conversation_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.NewErrorResponse(http.StatusBadRequest, "Invalid conversation ID"))
+		return
+	}
+
+	_, err = h.conversationService.GetAllConversations(conversation.UserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
@@ -380,13 +386,13 @@ func (h *userHandler) CreateMessage(c *gin.Context) {
 		return
 	}
 
-	err = h.messageService.CreateMessage(convID.ID, conversation.UserID, conversation.Message, "user")
+	err = h.messageService.CreateMessage(convID, conversation.UserID, conversation.Message, "user")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	err = h.messageService.CreateMessage(convID.ID, conversation.UserID, data.Choices[0].Message.Content, data.Choices[0].Message.Role)
+	err = h.messageService.CreateMessage(convID, conversation.UserID, data.Choices[0].Message.Content, data.Choices[0].Message.Role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
@@ -396,8 +402,9 @@ func (h *userHandler) CreateMessage(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "Success",
 		Data: model.RequestMessage{
-			UserID:  conversation.UserID,
-			Message: data.Choices[0].Message.Content,
+			UserID:         conversation.UserID,
+			ConversationID: convID,
+			Message:        data.Choices[0].Message.Content,
 		},
 	})
 }

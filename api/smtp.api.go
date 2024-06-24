@@ -3,6 +3,7 @@ package api
 import (
 	"capstone-project/helper"
 	"io/ioutil"
+	"net/http"
 	"net/smtp"
 	"strings"
 )
@@ -13,12 +14,19 @@ func SendMailSimple(subject string, otp string, to string) error {
 	smtpUser := helper.GetEnv("SMTP_USER")
 	smtpPort := helper.GetEnv("SMTP_PORT")
 
-	html, err := ioutil.ReadFile("smtp/smtp.html")
+	url := helper.GetEnv("SMTP_TEMPLATE_URL")
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
-	htmlStr := string(html)
+	htmlStr := string(body)
 	htmlStr = strings.ReplaceAll(htmlStr, "{{OTP}}", otp)
 
 	header := "MIME-Version: 1.0\r\n"
