@@ -1,0 +1,95 @@
+### Register New User
+POST http://localhost:8080/api/v1/user/register
+Content-Type: application/json
+
+{
+    "full_name": "Faris Munir Mahdi",
+    "username": "farismunir",
+    "email": "farismunir2@gmail.com",
+    "password": "Password1*"
+}
+
+### Login
+POST http://localhost:8080/api/v1/user/login
+Content-Type: application/json
+
+{
+    "username": "farismunir",
+    "password": "Password1*"
+}
+
+### Reset Password
+PATCH http://localhost:8080/api/v1/user/reset
+Content-Type: application/json
+
+{
+    "email": "johns@example.com",
+    "password": "Password1*"
+}
+
+### Send OTP
+POST http://localhost:8080/api/v1/otp/send
+Content-Type: application/json
+
+{
+    "email": "nekemam759@luravell.com"
+}
+
+### Verify OTP
+POST http://localhost:8080/api/v1/otp/verify/26
+Content-Type: application/json
+
+{
+    "otp_code": "335938"
+}
+
+### Create Conversation
+POST http://localhost:8080/api/v1/user/conversation
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTM4MjM1MywiaWF0IjoxNzE5MTIzMTUzLCJpc3MiOiJBc2tJTiEifQ.DXdcSqT-Yp4KoqkEHU6yQdQA7dwwyaidySB5VRnC7ac
+Content-Type: application/json
+
+{
+    "user_id": 28,
+    "message": "Jelaskan tentang dirimu!"
+}
+
+### Create Message
+POST http://localhost:8080/api/v1/user/conversation/21
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTM4NjI3OSwiaWF0IjoxNzE5MTI3MDc5LCJpc3MiOiJBc2tJTiEifQ.a4meLsWgdz48maV6FgwT8JmNJDIkKhoX35ORGptMiak
+Content-Type: application/json
+
+{
+    "user_id": 28,
+    "message": "Buatlah sebuah artikel tentang pemrograman web dengan menggunakan Golang"
+}
+
+### Get All Conversation
+GET http://localhost:8080/api/v1/user/conversation/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTM4NjI3OSwiaWF0IjoxNzE5MTI3MDc5LCJpc3MiOiJBc2tJTiEifQ.a4meLsWgdz48maV6FgwT8JmNJDIkKhoX35ORGptMiak
+
+### Delete Conversation
+DELETE http://localhost:8080/api/v1/user/conversation/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTM4MDk2MywiaWF0IjoxNzE5MTIxNzYzLCJpc3MiOiJBc2tJTiEifQ.C3hTgqyg2KQOLHBKTxlgN2dBKt-7OvANjzybGVRcfKQ
+
+### Delete All Conversation
+DELETE http://localhost:8080/api/v1/user/conversations/28
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTM4NjI3OSwiaWF0IjoxNzE5MTI3MDc5LCJpc3MiOiJBc2tJTiEifQ.a4meLsWgdz48maV6FgwT8JmNJDIkKhoX35ORGptMiak
+
+### Logout
+DELETE http://localhost:8080/api/v1/user/logout/28
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTE2NTQzMywiaWF0IjoxNzE4OTA2MjMzLCJpc3MiOiJBc2tJTiEifQ.DvAfJJKPSRoECxBUE2kuH_SnALlMhOl1Tuz6DyUEyRc
+
+### Get All Message
+GET http://localhost:8080/api/v1/user/message/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTM4NjI3OSwiaWF0IjoxNzE5MTI3MDc5LCJpc3MiOiJBc2tJTiEifQ.a4meLsWgdz48maV6FgwT8JmNJDIkKhoX35ORGptMiak
+
+### Delete Message
+DELETE http://localhost:8080/api/v1/user/message/33
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTM4NjI3OSwiaWF0IjoxNzE5MTI3MDc5LCJpc3MiOiJBc2tJTiEifQ.a4meLsWgdz48maV6FgwT8JmNJDIkKhoX35ORGptMiak
+
+### Get Server
+GET http://localhost:8080/api/v1/
+
+### Remove User
+DELETE http://localhost:8080/api/v1/remove/28
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsImV4cCI6MTcxOTExNjQ4MywiaWF0IjoxNzE4ODU3MjgzLCJpc3MiOiJBc2tJTiJ9.sEUV3-G5OaMRA4dmBJcUoj-SGDHwzWQN9NwNh0OkBYU
