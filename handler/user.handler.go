@@ -331,7 +331,7 @@ func (h *userHandler) CreateConversation(c *gin.Context) {
 		return
 	}
 
-	err = h.messageService.CreateMessage(convID.ID, conversation.UserID, data.Choices[0].Message.Content, data.Choices[0].Message.Role)
+	err = h.messageService.CreateMessage(convID.ID, conversation.UserID, data.Choices[0].Message.Content, "assistant")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return

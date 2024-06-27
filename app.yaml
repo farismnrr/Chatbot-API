@@ -1,2 +1,2 @@
 runtime: go122
-service: chatbot
+service: default

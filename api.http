@@ -45,11 +45,11 @@ Content-Type: application/json
 
 ### Create Conversation
 POST http://localhost:8080/api/v1/user/conversation
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTM4MjM1MywiaWF0IjoxNzE5MTIzMTUzLCJpc3MiOiJBc2tJTiEifQ.DXdcSqT-Yp4KoqkEHU6yQdQA7dwwyaidySB5VRnC7ac
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTc3NDUxNywiaWF0IjoxNzE5NTE1MzE3LCJpc3MiOiJBc2tJTiEifQ.op9njED3QPZKI47LRDZ3mGdX7MmbhqU1JZKz4v-0vq8
 Content-Type: application/json
 
 {
-    "user_id": 28,
+    "user_id": 1,
     "message": "Jelaskan tentang dirimu!"
 }
 
