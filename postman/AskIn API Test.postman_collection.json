@@ -1,0 +1,811 @@
+{
+	"info": {
+		"_postman_id": "9d45d7df-1ccd-423f-867d-dea91f99ef2d",
+		"name": "AskIn API Test",
+		"description": "The AskIn API test consists of various endpoints for user management,  \nconversation, and message handling. The test includes registering a new  \nuser, logging in, resetting passwords, sending and verifying one-time  \npasswords (OTPs), creating and managing conversations, creating and  \ndeleting messages, logging out, and getting all messages. Additionally,  \nthe test includes removing a user and getting server information. Each  \nendpoint requires specific HTTP methods, such as POST, PATCH, GET, and  \nDELETE, and some require authentication using a bearer token. The API  \ntest provides a comprehensive suite of tests to ensure the AskIn API is  \nfunctioning correctly and securely",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30262904"
+	},
+	"item": [
+		{
+			"name": "User API",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"full_name\": \"Faris Munir Mahdi\",\r\n    \"username\": \"farismunir\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"Password1*\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://{{url}}/api/v1/user/register"
+					},
+					"response": [
+						{
+							"name": "Register",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"full_name\": \"Faris Munir Mahdi\",\r\n    \"username\": \"farismunir\",\r\n    \"email\": \"nekemam759@luravell.com\",\r\n    \"password\": \"Password1*\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/v1/user/register"
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 19:15:42 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "53"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 201,\n    \"message\": \"User registered successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"farismunir\",\r\n    \"password\": \"Password1*\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://{{url}}/api/v1/user/login"
+					},
+					"response": [
+						{
+							"name": "Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"farismunir\",\r\n    \"password\": \"Password1*\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/v1/user/login"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "jwt_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlzbXVuaXIiLCJyb2xlIjoidXNlciIsInN0YXR1cyI6ImFjdGl2ZSIsImV4cCI6MTcxOTUxNTAxNCwiaWF0IjoxNzE5MjU1ODE0LCJpc3MiOiJBc2tJTiEifQ.LmiL2jcCECmcwVVsq3HzWYeWL6ayzsZvHZWnxJNuIvI; Path=/; Expires=Mon, 24 Jun 2024 19:04:04 GMT; HttpOnly; Secure; SameSite=Lax"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 19:03:34 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "62"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"Login successful\",\n    \"data\": {\n        \"user_id\": 1\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"Password1*\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://{{url}}/api/v1/user/reset"
+					},
+					"response": [
+						{
+							"name": "Reset Password",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"nekemam759@luravell.com\",\r\n    \"password\": \"Password1*\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/v1/user/reset"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 19:16:34 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "50"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"Password reset successful\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "OTP API",
+			"item": [
+				{
+					"name": "Send OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://{{url}}/api/v1/otp/send"
+					},
+					"response": [
+						{
+							"name": "Send OTP",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"nekemam759@luravell.com\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/v1/otp/send"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 19:23:15 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "114"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"OTP sent successfully\",\n    \"data\": [\n        {\n            \"user_id\": 1,\n            \"expiry\": \"2024-06-25T02:28:11.0031886+07:00\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Verify OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"otp_code\": \"901267\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://{{url}}/api/v1/otp/verify/{{userID}}"
+					},
+					"response": [
+						{
+							"name": "Verify OTP",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"otp_code\": \"901267\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/v1/otp/verify/1"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 19:31:47 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "125"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"OTP verified successfully\",\n    \"data\": [\n        {\n            \"user_id\": 1,\n            \"otp_code\": \"901267\",\n            \"expiry\": \"0001-01-01T00:00:00Z\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Conversation API",
+			"item": [
+				{
+					"name": "Create Conversation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{bearer}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": {{userID}},\r\n    \"message\": \"Buatlah sebuah lolucon lucu dengan bahasa indonesia\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://{{url}}/api/v1/user/conversation"
+					},
+					"response": [
+						{
+							"name": "Create Conversation",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_id\": 1,\r\n    \"message\": \"Buatlah sebuah lolucon lucu dengan bahasa indonesia\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/v1/user/conversation"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 20:23:23 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "333"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"Success\",\n    \"data\": {\n        \"conversation_id\": 1,\n        \"user_id\": 1,\n        \"message\": \"Here's a funny and silly limerick in Indonesian:\\n\\nAda Si Kucing yang sangat gemuk,\\nMakan mie goreng setiap lukunya.\\nTapi pada suatu hari,\\nDia makan terlalu banyak, lalu...\\nKucing itu meledak, oh what aony!\",\n        \"created_at\": \"0001-01-01T00:00:00Z\"\n    }\n}"
+						},
+						{
+							"name": "Create Conversation 2",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_id\": 1,\r\n    \"message\": \"Buatlah sebuah pemrograman NodeJS dengan menggunakan clean architecture, dan mysql. Dimana server tersebut menggunakan JWT sebagai authentication dan authorization\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/v1/user/conversation"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 20:23:39 GMT"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"Success\",\n    \"data\": {\n        \"conversation_id\": 2,\n        \"user_id\": 1,\n        \"message\": \"Here is an example of a Node.js application using Clean Architecture, MySQL, and JWT for authentication and authorization:\\n\\n** Folder Structure **\\n```\\nsrc/\\nentities/\\nuser.entity.js\\n...\\nusecases/\\nlogin.usecase.js\\nregister.usecase.js\\n...\\ninterfaces/\\nrepositories/\\nuserRepository.interface.js\\n...\\ngateways/\\nmysql.gateway.js\\n...\\nadapters/\\njwtAdapter.js\\n...\\nframework/\\nexpress.framework.js\\n...\\nmain.js\\nconfig/\\ndatabase.config.js\\njwt.config.js\\n...\\npackage.json\\n```\\n** Entities **\\n```\\n// user.entity.js\\nclass User {\\n  constructor(id, username, password) {\\n    this.id = id;\\n    this.username = username;\\n    this.password = password;\\n  }\\n}\\n\\nmodule.exports = User;\\n```\\n** Use Cases **\\n```\\n// login.usecase.js\\nclass LoginUseCase {\\n  constructor(userRepository) {\\n    this.userRepository = userRepository;\\n  }\\n\\n  async execute(username, password) {\\n    const user = await this.userRepository.findByUsername(username);\\n    if (!user) {\\n      throw new Error('Invalid username or password');\\n    }\\n    const isPasswordValid = await this.userRepository.comparePassword(password, user.password);\\n    if (!isPasswordValid) {\\n      throw new Error('Invalid username or password');\\n    }\\n    return user;\\n  }\\n}\\n\\nmodule.exports = LoginUseCase;\\n```\\n** Interfaces **\\n```\\n// userRepository.interface.js\\nclass UserRepository {\\n  async findByUsername(username) {\\n    throw new Error('Method not implemented');\\n  }\\n\\n  async comparePassword(password, hashedPassword) {\\n    throw new Error('Method not implemented');\\n  }\\n}\\n\\nmodule.exports = UserRepository;\\n```\\n** Gateways **\\n```\\n// mysql.gateway.js\\nconst mysql = require('mysql');\\nconst { Pool } = require('mysql');\\n\\nclass MysqlGateway {\\n  constructor(config) {\\n    this.config = config;\\n    this.pool = mysql.createPool(config);\\n  }\\n\\n  async query(sql, params) {\\n    return new Promise((resolve, reject) => {\\n      this.pool.query(sql, params, (err, results) => {\\n        if (err) {\\n          reject(err);\\n        } else {\\n          resolve(results);\\n        }\\n      });\\n    });\\n  }\\n}\\n\\nmodule.exports = MysqlGateway;\\n```\\n** Adapters **\\n```\\n// jwtAdapter.js\\nconst jwt = require('jsonwebtoken');\\n\\nclass JwtAdapter {\\n  constructor(config) {\\n    this.config = config;\\n  }\\n\\n  generateToken(user) {\\n    return jwt.sign({ id: user.id, username: user.username }, this.config.secret, {\\n      expiresIn: this.config.expiresIn,\\n    });\\n  }\\n\\n  verifyToken(token) {\\n    try {\\n      return jwt.verify(token, this.config.secret);\\n    } catch (err) {\\n      return null;\\n    }\\n  }\\n}\\n\\nmodule.exports = JwtAdapter;\\n```\\n** Framework **\\n```\\n// express.framework.js\\nconst express = require('express');\\nconst app = express();\\nconst jwtMiddleware = require('./jwtMiddleware');\\n\\napp.use(express.json());\\n\\napp.post('/login', jwtMiddleware, async (req, res) => {\\n  const { username, password } = req.body;\\n  const loginUseCase = new LoginUseCase(new UserRepository(new MysqlGateway(config)));\\n  try {\\n    const user = await loginUseCase.execute(username, password);\\n    const token = new JwtAdapter(config).generateToken(user);\\n    res.json({ token });\\n  } catch (err) {\\n    res.status(401).json({ error: 'Invalid username or password' });\\n  }\\n});\\n\\napp.get('/protected', jwtMiddleware, async (req, res) => {\\n  res.json({ message: 'Hello, protected route!' });\\n});\\n\\nmodule.exports = app;\\n```\\n** JWT Middleware **\\n```\\n// jwtMiddleware.js\\nconst jwtAdapter = new JwtAdapter(config);\\n\\nmodule.exports = async (req, res, next) => {\\n  const token = req.headers['x-access-token'] || req.headers['authorization'];\\n  if (!token) {\\n    return res.status(401).json({ error: 'Unauthorized' });\\n  }\\n  const decoded = jwtAdapter.verifyToken(token);\\n  if (!decoded) {\\n    return res.status(401).json({ error: 'Invalid token' });\\n  }\\n  req.user = decoded;\\n  next();\\n};\\n```\\n** config **\\n```\\n// database.config.js\\nmodule.exports = {\\n  host: 'localhost',\\n  user: 'root',\\n  password: 'password',\\n  database: 'database',\\n};\\n\\n// jwt.config.js\\nmodule.exports = {\\n  secret: 'secret_key',\\n  expiresIn: '1h',\\n};\\n```\\n** main.js **\\n```\\nconst app = require('./framework/express.framework');\\nconst port = 3000;\\n\\napp.listen(port, () => {\\n  console.log(`Server started on port ${port}`);\\n});\\n```\\nThis example uses:\\n\\n* Clean Architecture: separates the application into layers (entities, use cases, interfaces, gateways, adapters, and framework)\\n* MySQL: as the database\\n* JWT: for authentication and authorization\\n* Express.js: as the web framework\\n\\nNote that this is just a basic example and you should consider implementing additional security measures, such as input validation, error handling, and secure password storage.\",\n        \"created_at\": \"0001-01-01T00:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Conversations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{bearer}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://{{url}}/api/v1/user/conversation/{{userID}}"
+					},
+					"response": [
+						{
+							"name": "Get All Conversation",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": "http://localhost:8080/api/v1/user/conversation/1"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 19:43:16 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "443"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"user_id\": 1,\n        \"title\": \"Buatlah sebuah pemrograman NodeJS dengan menggunakan clean architecture, dan mysql. Dimana server tersebut menggunakan JWT sebagai authentication dan authorization\",\n        \"created_at\": \"2024-06-24T19:38:25+07:00\",\n        \"updated_at\": \"2024-06-24T19:38:25+07:00\"\n    },\n    {\n        \"id\": 2,\n        \"user_id\": 1,\n        \"title\": \"Buatlah sebuah lolucon lucu dengan bahasa indonesia\",\n        \"created_at\": \"2024-06-24T19:41:14+07:00\",\n        \"updated_at\": \"2024-06-24T19:41:14+07:00\"\n    }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Message API",
+			"item": [
+				{
+					"name": "Create Message",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{bearer}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": {{userID}},\r\n    \"message\": \"Loluconmu sebelumnya tidak lucu! Tolong buatlah sebuah lolucon baru yang lebih lucu dalam bahasa indonesia!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://{{url}}/api/v1/user/conversation/{{convID}}"
+					},
+					"response": [
+						{
+							"name": "Create Message",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_id\": 1,\r\n    \"message\": \"Loluconmu sebelumnya tidak lucu! Tolong buatlah sebuah lolucon baru yang lebih lucu dalam bahasa indonesia!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/v1/user/conversation/1"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 20:24:08 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1282"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"Success\",\n    \"data\": {\n        \"conversation_id\": 1,\n        \"user_id\": 1,\n        \"message\": \"I'm happy to help!\\n\\nHere's a brand new lolcon for you:\\n\\n**Lolucon Baru: Lulucil**\\n\\nLulucil adalah sebuah lolucon yang sangat lucu dan menarik. Dia memiliki kulit yang lembut seperti kapas dan rambut yang panjang seperti singa. Matanya yang besar dan cerah membuatnya tampak seperti bintang di langit. Lulucil sangat suka bermain-main dan membuat orang lain tertawa dengan tingkahnya yang lucu dan menggemaskan.\\n\\n**Personality:**\\n\\n* Lulucil adalah seorang lolucon yang sangat periang dan suka membuat orang lain senang.\\n* Dia sangat cerdas dan dapat memecahkan masalah dengan mudah.\\n* Lulucil sangat penyayang dan selalu ingin membantu orang lain.\\n\\n**Hobi:**\\n\\n* Bermain-main dengan teman-teman di taman bermain\\n* Membuat orang lain tertawa dengan tingkahnya yang lucu\\n* Makan makanan yang manis seperti es krim dan kue\\n\\n**Ciri-ciri:**\\n\\n* Lulucil memiliki kulit yang lembut seperti kapas\\n* Rambutnya yang panjang seperti singa membuatnya tampak seperti seorang putri\\n* Matanya yang besar dan cerah membuatnya tampak seperti bintang di langit\\n\\nBagaimana? Apakah Lulucil sudah membuatmu tertawa dan jatuh cinta dengan lolucon barunya ini?\",\n        \"created_at\": \"0001-01-01T00:00:00Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Messages",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{bearer}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://{{url}}/api/v1/user/message/{{convID}}"
+					},
+					"response": [
+						{
+							"name": "Get All Messages",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": "http://localhost:8080/api/v1/user/message/1"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 20:26:31 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1976"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"conversation_id\": 1,\n        \"user_id\": 1,\n        \"role\": \"user\",\n        \"message\": \"Buatlah sebuah lolucon lucu dengan bahasa indonesia\",\n        \"created_at\": \"2024-06-24T20:23:23+07:00\"\n    },\n    {\n        \"id\": 2,\n        \"conversation_id\": 1,\n        \"user_id\": 1,\n        \"role\": \"assistant\",\n        \"message\": \"Here's a funny and silly limerick in Indonesian:\\n\\nAda Si Kucing yang sangat gemuk,\\nMakan mie goreng setiap lukunya.\\nTapi pada suatu hari,\\nDia makan terlalu banyak, lalu...\\nKucing itu meledak, oh what aony!\",\n        \"created_at\": \"2024-06-24T20:23:23+07:00\"\n    },\n    {\n        \"id\": 5,\n        \"conversation_id\": 1,\n        \"user_id\": 1,\n        \"role\": \"user\",\n        \"message\": \"Loluconmu sebelumnya tidak lucu! Tolong buatlah sebuah lolucon baru yang lebih lucu dalam bahasa indonesia!\",\n        \"created_at\": \"2024-06-24T20:24:08+07:00\"\n    },\n    {\n        \"id\": 6,\n        \"conversation_id\": 1,\n        \"user_id\": 1,\n        \"role\": \"assistant\",\n        \"message\": \"I'm happy to help!\\n\\nHere's a brand new lolcon for you:\\n\\n**Lolucon Baru: Lulucil**\\n\\nLulucil adalah sebuah lolucon yang sangat lucu dan menarik. Dia memiliki kulit yang lembut seperti kapas dan rambut yang panjang seperti singa. Matanya yang besar dan cerah membuatnya tampak seperti bintang di langit. Lulucil sangat suka bermain-main dan membuat orang lain tertawa dengan tingkahnya yang lucu dan menggemaskan.\\n\\n**Personality:**\\n\\n* Lulucil adalah seorang lolucon yang sangat periang dan suka membuat orang lain senang.\\n* Dia sangat cerdas dan dapat memecahkan masalah dengan mudah.\\n* Lulucil sangat penyayang dan selalu ingin membantu orang lain.\\n\\n**Hobi:**\\n\\n* Bermain-main dengan teman-teman di taman bermain\\n* Membuat orang lain tertawa dengan tingkahnya yang lucu\\n* Makan makanan yang manis seperti es krim dan kue\\n\\n**Ciri-ciri:**\\n\\n* Lulucil memiliki kulit yang lembut seperti kapas\\n* Rambutnya yang panjang seperti singa membuatnya tampak seperti seorang putri\\n* Matanya yang besar dan cerah membuatnya tampak seperti bintang di langit\\n\\nBagaimana? Apakah Lulucil sudah membuatmu tertawa dan jatuh cinta dengan lolucon barunya ini?\",\n        \"created_at\": \"2024-06-24T20:24:08+07:00\"\n    }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Delete API",
+			"item": [
+				{
+					"name": "Delete Message",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{bearer}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "http://{{url}}/api/v1/user/message/{{msgID}}"
+					},
+					"response": [
+						{
+							"name": "Delete Message",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": "http://localhost:8080/api/v1/user/message/1"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 20:29:10 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "40"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"Message deleted\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Conversation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{bearer}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "http://{{url}}/api/v1/user/conversation/{{convID}}"
+					},
+					"response": [
+						{
+							"name": "Delete Conversation",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": "http://localhost:8080/api/v1/user/conversation/2"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 20:30:33 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "45"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"Conversation deleted\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete All Conversations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{bearer}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "http://{{url}}/api/v1/user/conversations/{{userID}}"
+					},
+					"response": [
+						{
+							"name": "Delete All Conversations",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": "http://localhost:8080/api/v1/user/conversations/1"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 20:31:29 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "49"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"All conversation deleted\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{bearer}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "http://{{url}}/api/v1/user/logout/{{userID}}"
+					},
+					"response": [
+						{
+							"name": "Logout",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": "http://localhost:8080/api/v1/user/logout/1"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 20:32:16 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "42"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"Logout successful\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{bearer}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "http://{{url}}/api/v1/user/remove/{{userID}}"
+					},
+					"response": [
+						{
+							"name": "Delete User",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": "http://localhost:8080/api/v1/user/remove/1"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 24 Jun 2024 20:36:08 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "50"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": 200,\n    \"message\": \"User removed successfully\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Get Server",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://{{url}}/"
+			},
+			"response": [
+				{
+					"name": "Get Server",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/"
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 24 Jun 2024 18:53:33 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "13"
+						}
+					],
+					"cookie": [],
+					"body": "Hello, World!"
+				}
+			]
+		}
+	]
+}
