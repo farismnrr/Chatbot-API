@@ -42,7 +42,7 @@ func SetupUserRouter(router *gin.Engine, db *database.Database, redis *database.
 	userRouter := NewUserRouter(userHandler, otpHandler, conversationHandler, messageHandler)
 
 	version := router.Group("/api/v1")
-	router.GET("/", userRouter.userHandler.GetServer)
+	version.GET("/", userRouter.userHandler.GetServer)
 
 	user := version.Group("/user")
 	user.POST("/register", userRouter.userHandler.Register)
