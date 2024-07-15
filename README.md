@@ -7,4 +7,4 @@
 3. Run `go run main.go` to run the app
    
 ## Postman Documentation
-[Postman API Documentation](https://documenter.getpostman.com/view/30262904/2sA3XY6xXw)
+[Postman API Documentation](https://documenter.getpostman.com/view/30262904/2sA3kPqQra)
